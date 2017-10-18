@@ -32,3 +32,5 @@ data_out <- dplyr::summarise(data_out, mean_value = mean(value))
 
 # NOTE: This doesn't make any sense because we average over fourier/non-fourier, 
 # acceleration_type, measurement_type, dimension, and test/train
+
+write.table(data_out, "data/tidy_data.txt", row.name = FALSE)
