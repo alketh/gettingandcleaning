@@ -43,9 +43,9 @@
 # 7. variable:         mean, std, mad, max, min, sma, energy, number, iqr, entropy, arCoef, correlation, maxInds, meanFreq, skewness, Kurtosis, bandsEnergy, angle
 
 # Add in function debugging.
-data <- "data/UCI HAR Dataset/test/X_test.txt"
-activity <- "data/UCI HAR Dataset/test/y_test.txt"
-subject <- "data/UCI HAR Dataset/test/subject_test.txt"
+# data <- "data/UCI HAR Dataset/test/X_test.txt"
+# activity <- "data/UCI HAR Dataset/test/y_test.txt"
+# subject <- "data/UCI HAR Dataset/test/subject_test.txt"
 
 clean_data <- function(data, activity, subject, features = "data/UCI HAR Dataset/features.txt") {
   clean <- readr::read_fwf(data, col_positions = readr::fwf_empty(data))
