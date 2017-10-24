@@ -28,9 +28,9 @@ The variables originate as a combination of the following informations:
 
 resulting in the following appearance:
 
-* `tGravityAccMag-max` (`trans``acc_type``measurement_type```Mag`-`variable`)
-* `fBodyAcc-bandsEnergy-33,40 ()` (`trans``acc_type``measurement_type`-`variable`-`age`)
-* `fBodyGyro-kurtosis-Y` (`trans``acc_type``measurement_type`-`variable`-`dimension`)
+* `tGravityAccMag-max` (`trans` `acc_type` `measurement_type` `Mag` - `variable`)
+* `fBodyAcc-bandsEnergy-33,40 ()` (`trans` `acc_type` `measurement_type` - `variable` - `age`)
+* `fBodyGyro-kurtosis-Y` (`trans` `acc_type` `measurement_type` - `variable` - `dimension`)
 
 ## Data preparation
 
