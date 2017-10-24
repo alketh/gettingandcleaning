@@ -1,3 +1,5 @@
+library("magrittr")
+
 source("CodeBook.R")
 
 # Tasks
@@ -13,7 +15,7 @@ train <- clean_data(data = "data/UCI HAR Dataset/train/X_train.txt",
 data <- dplyr::bind_rows(test, train)
 
 # 2. Extracts only the measurements on the mean and standard deviation for each measurement.
-data_sub <- dplyr::filter(data, variable %in% c("mean", "std"))
+data_sub <- dplyr::select(data, dplyr::matches('std|mean|subject|activity'))
 
 # 3. Uses descriptive activity names to name the activities in the data set
 act_lab <- read.csv("data/UCI HAR Dataset/activity_labels.txt", sep = " ", header = FALSE)
@@ -27,8 +29,8 @@ data_sub <- dplyr::inner_join(data_sub, act_lab)
 
 # 5. From the data set in step 4, creates a second, independent tidy 
 #    data set with the average of each variable for each activity and each subject.
-data_out <- dplyr::group_by(data_sub, activity, subject, label, variable)
-data_out <- dplyr::summarise(data_out, mean_value = mean(value))
+data_out <- dplyr::group_by(data_sub, subject, activity, label) %>% 
+  dplyr::summarise_all(dplyr::funs(m = mean))
 
 # NOTE: This doesn't make any sense because we average over fourier/non-fourier, 
 # acceleration_type, measurement_type, dimension, and test/train

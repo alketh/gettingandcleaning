@@ -43,17 +43,19 @@
 # 7. variable:         mean, std, mad, max, min, sma, energy, number, iqr, entropy, arCoef, correlation, maxInds, meanFreq, skewness, Kurtosis, bandsEnergy, angle
 
 # Add in function debugging.
-# data <- "data/UCI HAR Dataset/test/X_test.txt"
-# activity <- "data/UCI HAR Dataset/test/y_test.txt"
-# subject <- "data/UCI HAR Dataset/test/subject_test.txt"
+data <- "data/UCI HAR Dataset/test/X_test.txt"
+activity <- "data/UCI HAR Dataset/test/y_test.txt"
+subject <- "data/UCI HAR Dataset/test/subject_test.txt"
 
 clean_data <- function(data, activity, subject, features = "data/UCI HAR Dataset/features.txt") {
   clean <- readr::read_fwf(data, col_positions = readr::fwf_empty(data))
   act <- as.integer(readLines(activity))
   sub <- as.integer(readLines(subject))
-  feat <- read.csv("data/UCI HAR Dataset/features.txt", sep = " ", header = FALSE)
-  feat$var <- paste0("X", 1:nrow(feat))
-  feat <- feat[, 2:3]
+  feat <- read.csv("data/UCI HAR Dataset/features.txt", sep = " ", header = FALSE, stringsAsFactors = FALSE)[, 2]
+  
+  # Cleanup String a bit
+  feat <- stringr::str_replace_all(feat, pattern = "[\\(\\)]", replacement = "")
+  
   variables <- c("mean", "std", "mad", "max", "min", "sma", "energy", "number", "iqr", "entropy", 
                  "arCoeff", "correlation", "maxInds", "meanFreq", "skewness", "kurtosis", 
                  "bandsEnergy", "angle")
@@ -61,45 +63,23 @@ clean_data <- function(data, activity, subject, features = "data/UCI HAR Dataset
   # Leave function in case dimensions do not match!
   if (nrow(clean) != length(act)) stop("Measurements and activities do not match.")
   if (nrow(clean) != length(act)) stop("Measurements and subjects do not match.")
-  if (ncol(clean) != nrow(feat)) stop("Not all features present in the data.")
+  if (ncol(clean) != length(feat)) stop("Not all features present in the data.")
+  
+  # Add headings
+  names(clean) <- feat
   
   # Add new columns
-  # names(clean) <- feat[, 2]
   clean$activity <- act
   clean$subject <- sub
   
-  # Transform to tidy dataframe
-  dt <- tidyr::gather(clean, -activity, -subject, key = "var", value = "value")
-  dt <- dplyr::inner_join(dt, feat, by = "var")
-  
-  # Remove angle calculations
-  dt <- dt[-grep("angle", dt$V2), ]
-  
-  # Convert V2 column to actual columns.
-  dt$fourier <- ifelse(substr(dt$V2, 1, 1) == "f", T, F)
-  dt$acc_type <- ifelse(grepl(pattern = "Body", dt$V2), "Body", "Gravity")
-  dt$meas_type <- ifelse(grepl(pattern = "Acc", dt$V2), "Accelerometer", "Gyroscope")
-  dt$jerk <- ifelse(grepl(pattern = "Jerk", dt$V2), T, F)
-  
-  dt$dimension <- stringr::str_extract(dt$V2, pattern = "[XYZ]")
-  
-  # Extract variables. This is a bit messy
-  var <- stringr::str_split_fixed(dt$V2, pattern = "-", n = 2)[, 2]
-  var <- stringr::str_split_fixed(var, pattern = "-", n = 2)[, 1]
-  var <- stringr::str_replace_all(var, pattern = "[\\(\\)]", replacement = "")
-  var <- stringr::str_replace_all(var, pattern = "[0-9]", replacement = "")
-  if (any(!var %in% variables)) stop("Variable does not match.")
-  dt$variable <- var
-  
-  # Cleanup
-  out <- dplyr::select(dt, -var, -V2)
+  # Add data source column
   if (grepl(pattern = "test", data)) {
-    out$category <- "test"
+    clean$datasource <- "test"
   } else {
-    out$category <- "train"
+    clean$datasource <- "train"
   } 
   
-  return(out)
+  return(clean)
 }
 
 # Apply function
