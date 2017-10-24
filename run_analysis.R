@@ -32,7 +32,4 @@ data_sub <- dplyr::inner_join(data_sub, act_lab)
 data_out <- dplyr::group_by(data_sub, subject, activity, label) %>% 
   dplyr::summarise_all(dplyr::funs(m = mean))
 
-# NOTE: This doesn't make any sense because we average over fourier/non-fourier, 
-# acceleration_type, measurement_type, dimension, and test/train
-
 write.table(data_out, "data/tidy_data.txt", row.name = FALSE)
