@@ -56,10 +56,6 @@ clean_data <- function(data, activity, subject, features = "data/UCI HAR Dataset
   # Cleanup String a bit
   feat <- stringr::str_replace_all(feat, pattern = "[\\(\\)]", replacement = "")
   
-  variables <- c("mean", "std", "mad", "max", "min", "sma", "energy", "number", "iqr", "entropy", 
-                 "arCoeff", "correlation", "maxInds", "meanFreq", "skewness", "kurtosis", 
-                 "bandsEnergy", "angle")
-  
   # Leave function in case dimensions do not match!
   if (nrow(clean) != length(act)) stop("Measurements and activities do not match.")
   if (nrow(clean) != length(act)) stop("Measurements and subjects do not match.")
